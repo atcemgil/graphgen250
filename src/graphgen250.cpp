@@ -1,6 +1,6 @@
 //============================================================================
 // Name        : graphgen250.cpp
-// Author      : ATC
+// Author      : A. Taylan Cemgil
 // Description : Random graph construction using Interval Graphs
 //============================================================================
 
