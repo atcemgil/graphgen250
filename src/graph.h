@@ -23,8 +23,6 @@
 
 using namespace std;
 
-
-
 struct Edge {
 	unsigned int target;
 	double Weight;
@@ -54,7 +52,7 @@ public:
 		}
 	}
 
-	int MarkMST(unsigned int);
+	int MST(unsigned int);
 
 	int DFS(unsigned int, unsigned int, list<unsigned int>& path);
 
