@@ -4,24 +4,10 @@
 // Description : Random graph construction using Interval Graphs
 //============================================================================
 
-#include <utility>
-#include <string>
-#include <iostream>
-#include <fstream>
-#include <set>
-#include <list>
-#include <ctime>
-#include <vector>
-#include <limits>
-#include <algorithm>
+#include "graph.h"
 
-
-#include <cstdlib>
-#include <cmath>
-using namespace std;
 const double INF = numeric_limits<double>::infinity();
 double uRand() {return double(rand())/RAND_MAX; };
-
 
 struct Event {
 	double t;
@@ -32,225 +18,61 @@ struct Event {
 };
 bool isAfter(Event& a, Event& b) {return a.t > b.t;};
 
-struct Edge {
-	unsigned int target;
-	double Weight;
-	int UserData;
-	Edge(unsigned int _target=0, double w = 1.0, int ud = 0 ) {
-		target = _target; Weight = w; UserData = ud;
-	}
-};
+void Graph::SampleIntervalGraph(unsigned int Seed, bool isDirected = false, double lam1 = 0.5, double lam2 = 7.2) {
+	double t=0, dt, m;
+	double probThin = 0.7;
+	vector<Event> L; // Array of events, we will build a heap here
+	set<unsigned int> active; // Currently alive nodes in interval graph construction
+	Clear();
 
-class Graph {
-	vector< list<Edge> > al;
-	unsigned int N;
-	int dfs(unsigned int, unsigned int&, vector<bool>&, list<unsigned int>&);
-public:
-	Graph(unsigned int _N) {
-		N = _N;
-		al.resize(N);
-	}
-	void AddEdge(unsigned int source, Edge dest) {
-		if (source < N) al[source].push_back(dest);
+	srand(Seed); // time(NULL)
+	for (unsigned int i=0;i<N;i++) {
+		dt= 1 -lam1*log(uRand()) ;
+		//m = -lam2*log(uRand());
+		m = lam2;
+		//m = 7;
+		t = t + dt;
+		L.push_back(Event(t, i, true));   // Push Birth
+		L.push_back(Event(t+m, i, false));  // Push Death
 	}
 
-	void FindAndMarkEdge(unsigned int source, unsigned int target, int ud=1) {
-		if (source <N) {
-			for (list<Edge>::iterator it=al[source].begin(); it!=al[source].end();it++)
-				if (it->target == target) {it->UserData = ud; break;}
-		}
-	}
-
-	int MarkMST(unsigned int);
-
-	int DFS(unsigned int, unsigned int, list<unsigned int>& path);
-
-	void Print() {
-		for (unsigned int i=0; i<N; i++) {
-			list<Edge>::iterator it = al[i].begin();
-			cout << i << " :";
-			for (;it!=al[i].end();it++) cout << it->target << " ";
-			cout << endl;
-		}
-	}
-
-	void Clear() {
-		for (unsigned int i=0; i<N; i++) { al[i].clear();}
-	}
-
-
-	void PrintUndirected2DotFile(ofstream& co, bool PrintWeights = false) {
-		co << "graph D {" <<endl;
-		co << "size=\"3,3\"" <<endl;
-		co << "rankdir = \"LR\"" <<endl;
-		co << "overlap=\"false\"" <<endl;
-		co << "sep=\"0\"" <<endl;
-		co << "edge[style=\"bold\",color=\"black\"]" <<endl;
-		co << "node[shape=\"circle\"]" <<endl;
-
-		for (unsigned int i=0;i<N;i++) {
-			for (list<Edge>::iterator jt=al[i].begin(); jt!=al[i].end();jt++)
-				if (PrintWeights) {if (i<(jt->target)) co << char(i+'A') << "--" << char(jt->target+'A') << "[label=\"" << jt->Weight << "\"];" << endl;}
-				else {if (i<(jt->target)) co << char(i+'A') << "--" << char(jt->target+'A') << ";" << endl;}
-		}
-		co << "}" <<endl;
-	}
-
-	void PrintDirected2DotFile(ofstream& co, bool PrintWeights = false) {
-		co << "digraph D {" <<endl;
-		co << "size=\"3,3\"" <<endl;
-		co << "rankdir = \"LR\"" <<endl;
-		co << "overlap=\"false\"" <<endl;
-		co << "sep=\"0\"" <<endl;
-		co << "edge[style=\"bold\",color=\"black\"]" <<endl;
-		co << "node[shape=\"circle\"]" <<endl;
-
-		for (unsigned int i=0;i<N;i++) {
-			for (list<Edge>::iterator jt=al[i].begin(); jt!=al[i].end();jt++)
-				if (PrintWeights) { co << char(i+'A') << "->" << char(jt->target+'A') << "[label=\"" << jt->Weight << "\"];" << endl;}
-				else {co << char(i+'A') << "->" << char(jt->target+'A') << ";" << endl;}
-		}
-		co << "}" <<endl;
-	}
-
-	void PrintUndirectedHypergraph2DotFile(ofstream& co) {
-		co << "graph D {" <<endl;
-		co << "size=\"3,3\"" <<endl;
-		co << "rankdir = \"LR\"" <<endl;
-		co << "overlap=\"false\"" <<endl;
-		co << "sep=\"0\"" <<endl;
-		co << "edge[style=\"bold\",color=\"black\"]" <<endl;
-		co << "node[shape=\"circle\"]" <<endl;
-
-		int ec=0;
-		for (unsigned int i=0;i<N;i++) {
-			for (list<Edge>::iterator jt=al[i].begin(); jt!=al[i].end();jt++)
-				if (i<(jt->target)) {
-					if (jt->UserData!=1) {
-						co << "Edge" << ec << " [height=.01, width=0.01, shape=none, label=\"" << jt->Weight << "\"];" << endl;
-					}
-					else {
-						co << "Edge" << ec << " [height=.01, width=0.01, shape=box, label=\"" << jt->Weight << "\"];" << endl;
-					}
-
-					if (N>26) {
-						if (jt->UserData==1) {
-							co << "V" << i+1 << " -- " << " Edge" << ec << " [penwidth=5.0]" << endl;
-							co << " Edge" << ec << " -- " << "V" << jt->target +1 << " [penwidth =5.0]" << endl;
-						}
-						else {
-							co << "V" << i+1 << " -- " << " Edge" << ec << endl;
-							co << " Edge" << ec << " -- " << "V" << jt->target +1 << endl;
-						}
-					}
-					else {
-						co << char(i + 'A') << " -- " << " Edge" << ec << ((jt->UserData==1)? " [color=red, penwidth = 5.0];" : ";") << endl;
-						co << " Edge" << ec << " -- " << char(jt->target+'A') << ((jt->UserData==1)? " [color=red, penwidth = 5.0];" : ";") << endl;
-					}
-					ec++;
+	make_heap(L.begin(), L.end(), isAfter);
+	for (unsigned int i=0;i<2*N;i++) {
+		pop_heap(L.begin(), L.end(), isAfter);
+		vector<Event>::reverse_iterator e = L.rbegin();
+		if (e->born) {
+			for (set<unsigned int>::iterator it=active.begin(); it!=active.end(); it++) {
+				if (!isDirected) {
+				if (uRand()>probThin) {
+					double w = int(uRand()*20)+1;
+					//double w = 1.;
+					AddEdge(*it, Edge(e->node, w));
+					AddEdge(e->node, Edge(*it, w));
 				}
-		}
-		co << "}" <<endl;
-	}
-
-
-	void PrintDirectedHypergraph2DotFile(ofstream& co) {
-		co << "digraph D {" <<endl;
-		co << "size=\"3,3\"" <<endl;
-		co << "rankdir = \"LR\"" <<endl;
-		co << "overlap=\"false\"" <<endl;
-		co << "sep=\"0\"" <<endl;
-		co << "edge[style=\"bold\",color=\"black\"]" <<endl;
-		co << "node[shape=\"circle\"]" <<endl;
-
-		int ec=0;
-		for (unsigned int i=0;i<N;i++) {
-			for (list<Edge>::iterator jt=al[i].begin(); jt!=al[i].end();jt++)
-			{
-					if (jt->UserData!=1) {
-						co << "Edge" << ec << " [height=.01, width=0.01, shape=none, label=\"" << jt->Weight << "\"];" << endl;
-					}
-					else {
-						co << "Edge" << ec << " [height=.01, width=0.01, shape=box, label=\"" << jt->Weight << "\"];" << endl;
-					}
-
-					if (N>26) {
-						if (jt->UserData==1) {
-							co << "V" << i+1 << " - " << " Edge" << ec << " [penwidth=5.0]" << endl;
-							co << " Edge" << ec << " -> " << "V" << jt->target +1 << " [penwidth =5.0]" << endl;
-						}
-						else {
-							co << "V" << i+1 << " - " << " Edge" << ec << endl;
-							co << " Edge" << ec << " -> " << "V" << jt->target +1 << endl;
-						}
-					}
-					else {
-						co << char(i + 'A') << " -> " << " Edge" << ec << ((jt->UserData==1)? " [color=red, penwidth = 5.0];" : ";") << endl;
-						co << " Edge" << ec << " -> " << char(jt->target+'A') << ((jt->UserData==1)? " [color=red, penwidth = 5.0];" : ";") << endl;
-					}
-					ec++;
-			}
-		}
-		co << "}" <<endl;
-	}
-
-
-	void SampleIntervalGraph(unsigned int Seed, bool isDirected = false, double lam1 = 0.5, double lam2 = 7.2) {
-		double t=0, dt, m;
-		double probThin = 0.7;
-		vector<Event> L; // Array of events, we will build a heap here
-		set<unsigned int> active; // Currently alive nodes in interval graph construction
-		Clear();
-
-		srand(Seed); // time(NULL)
-		for (unsigned int i=0;i<N;i++) {
-			dt= 1 -lam1*log(uRand()) ;
-			//m = -lam2*log(uRand());
-			m = lam2;
-			//m = 7;
-			t = t + dt;
-			L.push_back(Event(t, i, true));   // Push Birth
-			L.push_back(Event(t+m, i, false));  // Push Death
-		}
-
-		make_heap(L.begin(), L.end(), isAfter);
-		for (unsigned int i=0;i<2*N;i++) {
-			pop_heap(L.begin(), L.end(), isAfter);
-			vector<Event>::reverse_iterator e = L.rbegin();
-			if (e->born) {
-				for (set<unsigned int>::iterator it=active.begin(); it!=active.end(); it++) {
-					if (!isDirected) {
+				}
+				else {
+					double w;
 					if (uRand()>probThin) {
-						double w = int(uRand()*20)+1;
-						//double w = 1.;
+						w = int(uRand()*20)+1;
 						AddEdge(*it, Edge(e->node, w));
+					}
+					if (uRand()>probThin) {
+						w = int(uRand()*20)+1;
 						AddEdge(e->node, Edge(*it, w));
 					}
-					}
-					else {
-						double w;
-						if (uRand()>probThin) {
-							w = int(uRand()*20)+1;
-							AddEdge(*it, Edge(e->node, w));
-						}
-						if (uRand()>probThin) {
-							w = int(uRand()*20)+1;
-							AddEdge(e->node, Edge(*it, w));
-						}
-					}
 				}
-				active.insert(e->node);
 			}
-			else {
-				set<unsigned int>::iterator it=active.find(e->node);
-				if (it!=active.end()) active.erase(it);
-			}
-			L.pop_back();
-		};
+			active.insert(e->node);
+		}
+		else {
+			set<unsigned int>::iterator it=active.find(e->node);
+			if (it!=active.end()) active.erase(it);
+		}
+		L.pop_back();
+	};
 
-	}
+}
 
-};
 
 int find_nearest_unvisited(vector<bool>& visited, vector<double> D, unsigned int N)
 {
