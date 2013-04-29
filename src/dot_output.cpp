@@ -35,8 +35,13 @@ void Graph::PrintUndirected2DotFile(ofstream& co, bool PrintWeights = false) {
 
 		for (unsigned int i=0;i<N;i++) {
 			for (list<Edge>::iterator jt=al[i].begin(); jt!=al[i].end();jt++)
-				if (PrintWeights) { co << char(i+'A') << "->" << char(jt->target+'A') << "[label=\"" << jt->Weight << "\"];" << endl;}
-				else {co << char(i+'A') << "->" << char(jt->target+'A') << ";" << endl;}
+				if (PrintWeights) {
+					co << char(i+'A') << "->"
+					   << char(jt->target+'A')
+					   << "[label=\"" << jt->Weight << "\""
+					   << ((jt->UserData==1)? ", color=red, penwidth = 5.0" : "")
+					   << "];" << endl;}
+				else {co << char(i+'A') << "->" << char(jt->target+'A') << ((jt->UserData==1)? " [color=red, penwidth = 5.0];" : ";") << endl;}
 		}
 		co << "}" <<endl;
 	}

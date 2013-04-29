@@ -7,7 +7,6 @@
 
 #include "graph.h"
 
-const double INF = numeric_limits<double>::infinity();
 double uRand() {return double(rand())/RAND_MAX; };
 
 struct Event {
@@ -19,7 +18,7 @@ struct Event {
 };
 bool isAfter(Event& a, Event& b) {return a.t > b.t;};
 
-void Graph::SampleIntervalGraph(unsigned int Seed, bool isDirected = false, double lam1 = 0.5, double lam2 = 7.2) {
+void Graph::SampleIntervalGraph(unsigned int Seed, bool isDirected, double lam1, double lam2) {
 	double t=0, dt, m;
 	double probThin = 0.7;
 	vector<Event> L; // Array of events, we will build a heap here

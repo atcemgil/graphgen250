@@ -23,6 +23,8 @@
 
 using namespace std;
 
+const double INF = numeric_limits<double>::infinity();
+
 struct Edge {
 	unsigned int target;
 	double Weight;
@@ -52,9 +54,9 @@ public:
 		}
 	}
 
-	int MST(unsigned int);
+	int MST(unsigned int source, vector<int>& uplink);
 
-	int DFS(unsigned int, unsigned int, list<unsigned int>& path);
+	int DFS(unsigned int source, unsigned int dest, list<unsigned int>& path);
 
 	void Print() {
 		for (unsigned int i=0; i<N; i++) {
@@ -73,7 +75,7 @@ public:
 	void PrintDirected2DotFile(ofstream& co, bool PrintWeights);
 	void PrintUndirectedHypergraph2DotFile(ofstream& co);
 	void PrintDirectedHypergraph2DotFile(ofstream& co);
-	void SampleIntervalGraph(unsigned int Seed, bool isDirected, double lam1, double lam2);
+	void SampleIntervalGraph(unsigned int Seed, bool isDirected = false, double lam1 = 0.5, double lam2 = 7.2);
 };
 
 

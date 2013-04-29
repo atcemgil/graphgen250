@@ -7,13 +7,11 @@
 #include "graph.h"
 
 int main() {
-	int N = 10;
+	int N = 20;
 	Graph g(N);
 	bool GenerateDirectedGraph = true;
-	bool PrintWeights = false;
 	int seed = time(NULL);
 	//int seed = 1366468315;
-	int found_link;
 
 	cout << "Seed: " << seed << endl;
 	g.SampleIntervalGraph(seed, GenerateDirectedGraph);
@@ -22,6 +20,7 @@ int main() {
 	string fn("deneme.dot");
 	string fno("deneme_orig.dot");
 
+	bool PrintWeights = true;
 	os.open(fno.c_str());
 	if (GenerateDirectedGraph) {
 		g.PrintDirected2DotFile(os, PrintWeights);
@@ -36,14 +35,30 @@ int main() {
 	system("dot -Gsize=35,30 -Tpng deneme_orig.dot > deneme_orig.png");
 
 	g.Print();
+
+	int found_link;
 	list<unsigned int> path;
 	found_link = g.DFS(0, N-1, path);
 	if (found_link==-1) cout << "No path found" << endl;
 	else {
-		for (list<unsigned int>::iterator it=path.begin(); it!=path.end(); it++)
+		unsigned int last; bool last_valid = false;
+		for (list<unsigned int>::iterator it=path.begin(); it!=path.end(); it++) {
 			cout << char(*it+'A') << "->";
+			if (last_valid) {
+				g.FindAndMarkEdge(last, *it);
+			}
+			last_valid = true;
+			last = *it;
+		}
 		cout << endl;
 	}
+	os.open(fn.c_str());
+	// g.PrintUndirectedHypergraph2DotFile(os);
+	g.PrintDirected2DotFile(os, PrintWeights);
+	os.close();
+
+	system("dot -Teps deneme.dot > deneme.eps");
+	system("dot -Gsize=35,30 -Tpng deneme.dot > deneme.png");
 
 
 	if (false) {
@@ -57,8 +72,6 @@ int main() {
 				g.FindAndMarkEdge(i, uplink[i]);
 			}
 		};
-
-
 		os.open(fn.c_str());
 		g.PrintUndirectedHypergraph2DotFile(os);
 		//	g.PrintUndirected2DotFile(os);
@@ -66,6 +79,7 @@ int main() {
 
 		system("dot -Teps deneme.dot > deneme.eps");
 		system("dot -Gsize=35,30 -Tpng deneme.dot > deneme.png");
+
 	};
 
 
