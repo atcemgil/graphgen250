@@ -75,7 +75,7 @@ public:
 	void PrintDirected2DotFile(ofstream& co, bool PrintWeights);
 	void PrintUndirectedHypergraph2DotFile(ofstream& co);
 	void PrintDirectedHypergraph2DotFile(ofstream& co);
-	void SampleIntervalGraph(unsigned int Seed, bool isDirected = false, double lam1 = 0.5, double lam2 = 7.2);
+	void SampleIntervalGraph(unsigned int Seed, bool isDirected = false, double lam1 = 0.5, double lam2 = 7.2, double (*WeightFun)() = NULL);
 };
 
 

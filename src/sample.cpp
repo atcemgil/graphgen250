@@ -18,12 +18,17 @@ struct Event {
 };
 bool isAfter(Event& a, Event& b) {return a.t > b.t;};
 
-void Graph::SampleIntervalGraph(unsigned int Seed, bool isDirected, double lam1, double lam2) {
+double defaultWeightFun() {return int(uRand()*20)+1;}
+
+void Graph::SampleIntervalGraph(unsigned int Seed, bool isDirected, double lam1, double lam2, double (*WeightFun)()) {
 	double t=0, dt, m;
+
 	double probThin = 0.7;
 	vector<Event> L; // Array of events, we will build a heap here
 	set<unsigned int> active; // Currently alive nodes in interval graph construction
 	Clear();
+
+	if (WeightFun==NULL) WeightFun = defaultWeightFun;
 
 	srand(Seed); // time(NULL)
 	for (unsigned int i=0;i<N;i++) {
@@ -45,7 +50,7 @@ void Graph::SampleIntervalGraph(unsigned int Seed, bool isDirected, double lam1,
 			for (set<unsigned int>::iterator it=active.begin(); it!=active.end(); it++) {
 				if (!isDirected) {
 				if (uRand()>probThin) {
-					double w = int(uRand()*20)+1;
+					double w = WeightFun();
 					//double w = 1.;
 					AddEdge(*it, Edge(e->node, w));
 					AddEdge(e->node, Edge(*it, w));
@@ -54,11 +59,11 @@ void Graph::SampleIntervalGraph(unsigned int Seed, bool isDirected, double lam1,
 				else {
 					double w;
 					if (uRand()>probThin) {
-						w = int(uRand()*20)+1;
+						w = WeightFun();
 						AddEdge(*it, Edge(e->node, w));
 					}
 					if (uRand()>probThin) {
-						w = int(uRand()*20)+1;
+						w = WeightFun();
 						AddEdge(e->node, Edge(*it, w));
 					}
 				}
