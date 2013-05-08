@@ -54,6 +54,7 @@ int Graph::MST(unsigned int source, vector<int>& uplink) {
 int Graph::DFS(unsigned int root, unsigned int target, list<unsigned int>& path) {
 	// Depth first search driver
 	// Finds a route from root to target via dfs
+	// Returns -1 if a path is not found
 	vector<bool> visited(N);
 	for (unsigned int i=0; i<N; i++) visited[i]=false;
 	visited[root] = true;

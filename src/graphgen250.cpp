@@ -6,21 +6,29 @@
 
 #include "graph.h"
 
+//double myWeightFun() {static double z=0.0; return (z+=1.0);};
+double myWeightFun() {return int(20*uRand())+1;};
+
 int main() {
-	int N = 20;
+	int N = 5;
 	Graph g(N);
 	bool GenerateDirectedGraph = true;
+	bool PrintWeights = true;
 	int seed = time(NULL);
 	//int seed = 1366468315;
 
 	cout << "Seed: " << seed << endl;
-	g.SampleIntervalGraph(seed, GenerateDirectedGraph);
+
+	double l1 = 0.5;
+	double l2 = 4.2;
+	double pThin = 0.2;
+
+	g.SampleIntervalGraph(seed, GenerateDirectedGraph, l1, l2, pThin, myWeightFun);
 
 	ofstream os;
 	string fn("deneme.dot");
 	string fno("deneme_orig.dot");
 
-	bool PrintWeights = true;
 	os.open(fno.c_str());
 	if (GenerateDirectedGraph) {
 		g.PrintDirected2DotFile(os, PrintWeights);
@@ -36,6 +44,7 @@ int main() {
 
 	g.Print();
 
+	if (true) {
 	int found_link;
 	list<unsigned int> path;
 	found_link = g.DFS(0, N-1, path);
@@ -59,12 +68,12 @@ int main() {
 
 	system("dot -Teps deneme.dot > deneme.eps");
 	system("dot -Gsize=35,30 -Tpng deneme.dot > deneme.png");
-
+	};
 
 	if (false) {
 		vector<int> uplink;
 		g.MST(0, uplink);
-
+		cout << "Uplink Size" << uplink.size() << endl;
 		for (unsigned int i=0;i<uplink.size();i++) {
 			if (uplink[i]!=-1) {
 				cout << char(i+'A') << "--" << char(uplink[i]+'A') << endl;

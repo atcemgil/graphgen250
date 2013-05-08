@@ -20,10 +20,8 @@ bool isAfter(Event& a, Event& b) {return a.t > b.t;};
 
 double defaultWeightFun() {return int(uRand()*20)+1;}
 
-void Graph::SampleIntervalGraph(unsigned int Seed, bool isDirected, double lam1, double lam2, double (*WeightFun)()) {
+void Graph::SampleIntervalGraph(unsigned int Seed, bool isDirected, double lam1, double lam2, double probThin, double (*WeightFun)()) {
 	double t=0, dt, m;
-
-	double probThin = 0.7;
 	vector<Event> L; // Array of events, we will build a heap here
 	set<unsigned int> active; // Currently alive nodes in interval graph construction
 	Clear();

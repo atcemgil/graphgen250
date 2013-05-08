@@ -24,6 +24,7 @@
 using namespace std;
 
 const double INF = numeric_limits<double>::infinity();
+double uRand();
 
 struct Edge {
 	unsigned int target;
@@ -59,11 +60,22 @@ public:
 	int DFS(unsigned int source, unsigned int dest, list<unsigned int>& path);
 
 	void Print() {
+		if (N>26) {
 		for (unsigned int i=0; i<N; i++) {
 			list<Edge>::iterator it = al[i].begin();
 			cout << i << " :";
 			for (;it!=al[i].end();it++) cout << it->target << " ";
 			cout << endl;
+		}
+		}
+		else {
+			for (unsigned int i=0; i<N; i++) {
+				list<Edge>::iterator it = al[i].begin();
+				cout << char(i + 'A') << " :";
+				for (;it!=al[i].end();it++) cout << char(it->target  + 'A')<< " ";
+				cout << endl;
+			}
+
 		}
 	}
 
@@ -75,7 +87,7 @@ public:
 	void PrintDirected2DotFile(ofstream& co, bool PrintWeights);
 	void PrintUndirectedHypergraph2DotFile(ofstream& co);
 	void PrintDirectedHypergraph2DotFile(ofstream& co);
-	void SampleIntervalGraph(unsigned int Seed, bool isDirected = false, double lam1 = 0.5, double lam2 = 7.2, double (*WeightFun)() = NULL);
+	void SampleIntervalGraph(unsigned int Seed, bool isDirected = false, double lam1 = 0.5, double lam2 = 7.2, double probThin = 0.0, double (*WeightFun)() = NULL);
 };
 
 
