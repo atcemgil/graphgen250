@@ -64,7 +64,7 @@ public:
 		for (unsigned int i=0; i<N; i++) {
 			list<Edge>::iterator it = al[i].begin();
 			cout << i << " :";
-			for (;it!=al[i].end();it++) cout << it->target << " ";
+			for (;it!=al[i].end();it++) cout << "(" << it->target << ", " << it->Weight << ") ";
 			cout << endl;
 		}
 		}
@@ -72,7 +72,7 @@ public:
 			for (unsigned int i=0; i<N; i++) {
 				list<Edge>::iterator it = al[i].begin();
 				cout << char(i + 'A') << " :";
-				for (;it!=al[i].end();it++) cout << char(it->target  + 'A')<< " ";
+				for (;it!=al[i].end();it++) cout << "(" << char(it->target  + 'A') << ", " << it->Weight << ") ";
 				cout << endl;
 			}
 
