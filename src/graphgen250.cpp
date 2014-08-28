@@ -42,6 +42,7 @@ int main() {
 	};
 	os.close();
 
+	system("ls -la");
 	system("/usr/local/bin/dot -Teps deneme_orig.dot > deneme_orig.eps");
 	system("/usr/local/bin/dot -Gsize=35,30 -Tpng deneme_orig.dot > deneme_orig.png");
 
