@@ -6,22 +6,24 @@
 
 #include "graph.h"
 
-//double myWeightFun() {static double z=0.0; return (z+=1.0);};
-double myWeightFun() {return int(20*uRand())+1;};
+double myWeightFun() {static double z=0.0; return (z+=1.0);};
+//double myWeightFun() {return int(20*uRand())+1;};
 
 int main() {
-	int N = 5;
+	unsigned int N = 10;
+
 	Graph g(N);
-	bool GenerateDirectedGraph = true;
+
+	bool GenerateDirectedGraph = false;
 	bool PrintWeights = true;
 	int seed = time(NULL);
 	//int seed = 1366468315;
 
 	cout << "Seed: " << seed << endl;
 
-	double l1 = 0.5;
-	double l2 = 4.2;
-	double pThin = 0.2;
+	double l1 = 0.3;
+	double l2 = 5.2;
+	double pThin = 0.3;
 
 	g.SampleIntervalGraph(seed, GenerateDirectedGraph, l1, l2, pThin, myWeightFun);
 
@@ -39,8 +41,9 @@ int main() {
 		//g.PrintUndirected2DotFile(os);
 	};
 	os.close();
-	system("dot -Teps deneme_orig.dot > deneme_orig.eps");
-	system("dot -Gsize=35,30 -Tpng deneme_orig.dot > deneme_orig.png");
+
+	system("/usr/local/bin/dot -Teps deneme_orig.dot > deneme_orig.eps");
+	system("/usr/local/bin/dot -Gsize=35,30 -Tpng deneme_orig.dot > deneme_orig.png");
 
 	g.Print();
 
@@ -90,7 +93,6 @@ int main() {
 		system("dot -Gsize=35,30 -Tpng deneme.dot > deneme.png");
 
 	};
-
 
 	return 0;
 
