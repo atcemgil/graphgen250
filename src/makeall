@@ -1,0 +1,8 @@
+#!/bin/bash
+
+GCPP=g++
+
+$GCPP -c algorithms.cpp
+$GCPP -c dot_output.cpp
+$GCPP -c sample.cpp
+$GCPP -o graphgen250 graphgen250.cpp algorithms.o dot_output.o sample.o 
