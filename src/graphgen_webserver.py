@@ -12,6 +12,9 @@ from tornado.httpserver import HTTPServer
 HOST = 'localhost'
 PORT = 8880
 
+global N
+N = 8
+
 import json
 import time
 import requests
@@ -25,6 +28,19 @@ import numpy as np
 import matplotlib.pyplot as plt
 #from mpld3 import fig_to_html, fig_to_d3, show_d3
 
+class set_params(tornado.web.RequestHandler):
+    def get(self, *args):
+        self.post(*args)
+
+    def post(self, *args):
+        """
+        """
+        global N
+
+        tmp = int(self.get_argument('N'))
+        if tmp<30 and tmp>0:
+            N = tmp
+
 class plot_figure(tornado.web.RequestHandler):
     def get(self, *args):
         self.post(*args)
@@ -35,8 +51,7 @@ class plot_figure(tornado.web.RequestHandler):
         
         """
         
-        
-        os.system('./graphgen '+str(8))
+        os.system('./graphgen ' + N)
 
         self.write('<!DOCTYPE html><html><body>')
         self.write('<img src=\"./deneme_orig.png\">')
@@ -51,12 +66,11 @@ STATIC_PATH = os.path.join(DIRNAME, '.')
 
 
 routes_config = [
+    (r"/set_params", set_params),
     (r"/plot_figure", plot_figure),
     (r"/(.*\.png)", tornado.web.StaticFileHandler,{"path": "." }),
-#    (r"/set_params", set_params),
 ]
 
-#    (r"/deneme.png", tornado.web.StaticFileHandler, {"path": "."},),
 
 application = tornado.web.Application(routes_config)
 
