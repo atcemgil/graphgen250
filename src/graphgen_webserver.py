@@ -41,7 +41,7 @@ class set_params(tornado.web.RequestHandler):
         if tmp<30 and tmp>0:
             N = tmp
 
-class plot_figure(tornado.web.RequestHandler):
+class plot_ug(tornado.web.RequestHandler):
     def get(self, *args):
         self.post(*args)
         #self.write("not implemented yet")
@@ -59,6 +59,22 @@ class plot_figure(tornado.web.RequestHandler):
 
         #self.add_header('Content-Type', 'application/json')
 
+class plot_mst(tornado.web.RequestHandler):
+    def get(self, *args):
+        self.post(*args)
+        #self.write("not implemented yet")
+
+    def post(self, *args):
+        """ 
+        
+        """
+        
+        self.write('<!DOCTYPE html><html><body>')
+        self.write('<img src=\"./deneme.png\">')
+        self.write('</body></html>')
+
+        #self.add_header('Content-Type', 'application/json')
+
 
 DEBUG = True
 DIRNAME = os.path.dirname(__file__)
@@ -67,7 +83,8 @@ STATIC_PATH = os.path.join(DIRNAME, '.')
 
 routes_config = [
     (r"/set_params", set_params),
-    (r"/plot_figure", plot_figure),
+    (r"/plot_ug", plot_ug),
+    (r"/plot_mst", plot_mst),
     (r"/(.*\.png)", tornado.web.StaticFileHandler,{"path": "." }),
 ]
 
