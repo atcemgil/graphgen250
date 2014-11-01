@@ -51,7 +51,7 @@ class plot_figure(tornado.web.RequestHandler):
         
         """
         
-        os.system('./graphgen ' + N)
+        os.system('./graphgen ' + str(N))
 
         self.write('<!DOCTYPE html><html><body>')
         self.write('<img src=\"./deneme_orig.png\">')
