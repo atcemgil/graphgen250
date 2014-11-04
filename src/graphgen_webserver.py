@@ -14,6 +14,12 @@ PORT = 8880
 
 global N
 N = 8
+global weightfun
+weightfun = 1
+global seed
+seed = 0
+
+
 
 import json
 import time
@@ -38,8 +44,14 @@ class set_params(tornado.web.RequestHandler):
         global N
 
         tmp = int(self.get_argument('N'))
-        if tmp<30 and tmp>0:
+        if tmp<=40 and tmp>0:
             N = tmp
+
+        tmp = int(self.get_argument('WF'))
+        weightfun = tmp
+
+        seed = int(self.get_argument('seed')
+
 
 class plot_ug(tornado.web.RequestHandler):
     def get(self, *args):
@@ -51,7 +63,7 @@ class plot_ug(tornado.web.RequestHandler):
         
         """
         
-        os.system('./graphgen ' + str(N))
+        os.system('./graphgen ' + str(N) + ' ' + str(weightfun) + ' ' + str(seed))
 
         self.write('<!DOCTYPE html><html><body>')
         self.write('<img src=\"./deneme_orig.png\">')
@@ -86,6 +98,8 @@ routes_config = [
     (r"/plot_ug", plot_ug),
     (r"/plot_mst", plot_mst),
     (r"/(.*\.png)", tornado.web.StaticFileHandler,{"path": "." }),
+    (r"/(.*\.eps)", tornado.web.StaticFileHandler,{"path": "." }),
+    (r"/(.*\.dot)", tornado.web.StaticFileHandler,{"path": "." }),
 ]
 
 
