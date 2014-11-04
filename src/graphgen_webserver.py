@@ -62,8 +62,10 @@ class plot_ug(tornado.web.RequestHandler):
         """ 
         
         """
-        
-        os.system('./graphgen ' + str(N) + ' ' + str(weightfun) + ' ' + str(seed))
+        if seed==0:
+            os.system('./graphgen ' + str(N) + ' ' + str(weightfun))
+        else:
+            os.system('./graphgen ' + str(N) + ' ' + str(weightfun) + ' ' + str(seed))
 
         self.write('<!DOCTYPE html><html><body>')
         self.write('<img src=\"./deneme_orig.png\">')
