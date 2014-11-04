@@ -42,6 +42,8 @@ class set_params(tornado.web.RequestHandler):
         """
         """
         global N
+        global weightfun
+        global seed
 
         tmp = int(self.get_argument('N'))
         if tmp<=40 and tmp>0:
