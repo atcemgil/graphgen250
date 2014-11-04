@@ -50,7 +50,7 @@ class set_params(tornado.web.RequestHandler):
         tmp = int(self.get_argument('WF'))
         weightfun = tmp
 
-        seed = int(self.get_argument('seed')
+        seed = int(self.get_argument('seed'))
 
 
 class plot_ug(tornado.web.RequestHandler):
