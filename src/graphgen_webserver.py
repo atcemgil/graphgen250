@@ -12,6 +12,9 @@ from tornado.httpserver import HTTPServer
 HOST = 'localhost'
 PORT = 8880
 
+global source
+global sink
+
 global N
 N = 8
 global weightfun
@@ -54,6 +57,32 @@ class set_params(tornado.web.RequestHandler):
 
         seed = int(self.get_argument('seed'))
 
+class plot_dag(tornado.web.RequestHandler):
+    def get(self, *args):
+        self.post(*args)
+        #self.write("not implemented yet")
+
+    def post(self, *args):
+        """ 
+        
+        """
+        global N
+        global source
+        global sink
+
+        source = 0 
+        sink = N-1
+
+        if seed==0:
+            os.system('./daggen ' + str(N) + ' ' + str(source) + ' ' + str(sink))
+        else:
+            os.system('./daggen ' + str(N) + ' ' + str(source) + ' ' + str(sink) + ' ' + str(seed))
+          
+        self.write('<!DOCTYPE html><html><body>')
+        self.write('<img src=\"./dag_orig.png\">')
+        self.write('</body></html>')
+
+        #self.add_header('Content-Type', 'application/json')
 
 class plot_ug(tornado.web.RequestHandler):
     def get(self, *args):
@@ -100,6 +129,7 @@ STATIC_PATH = os.path.join(DIRNAME, '.')
 routes_config = [
     (r"/set_params", set_params),
     (r"/plot_ug", plot_ug),
+    (r"/plot_dag", plot_dag),
     (r"/plot_mst", plot_mst),
     (r"/(.*\.png)", tornado.web.StaticFileHandler,{"path": "." }),
     (r"/(.*\.eps)", tornado.web.StaticFileHandler,{"path": "." }),
