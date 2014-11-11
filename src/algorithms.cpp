@@ -7,7 +7,7 @@
 
 #include "graph.h"
 
-// Utility for MST
+// Utility for MST, inefficient, need a priority queue here
 int find_nearest_unvisited(vector<bool>& visited, vector<double> D, unsigned int N)
 {
   int t = -1;
