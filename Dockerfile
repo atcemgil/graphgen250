@@ -1,5 +1,7 @@
 FROM python:2.7
 
+RUN apt-get update && apt-get -y install graphviz
+
 WORKDIR /code
 COPY requirements.txt ./
 RUN pip install -r requirements.txt
