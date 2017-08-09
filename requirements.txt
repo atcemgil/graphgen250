@@ -1,0 +1,5 @@
+matplotlib==2.0.2
+numpy==1.13.1
+python-dateutil==2.6.1
+requests==2.18.3
+tornado==4.5.1
